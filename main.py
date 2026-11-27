@@ -1,13 +1,20 @@
 from fastapi import FastAPI
+from uvicorn import run
+
+from src.routers import post_router
 
 app = FastAPI()
+app.include_router(post_router)
 
 
-@app.get("/")
-def hello_world():
-    return {"message": "Привет, мир!"}
+def main():
+    """Запуск сервера."""
+    run(
+        app,
+        host='127.0.0.1',
+        port=8000,
+    )
 
 
-@app.get("/about")
-def about_page():
-    return {"name": "Мой блог", "version": "1.0"}
+if __name__ == '__main__':
+    main()
