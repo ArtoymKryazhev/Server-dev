@@ -1,4 +1,8 @@
+from datetime import datetime
+from typing import Optional
+
 from sqlalchemy import String
+from sqlalchemy import TIMESTAMP
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 
@@ -43,4 +47,11 @@ class UserModel(MixinAutoIdModel, MixinSoftDeleteModel):
         nullable=False,
         comment='Пароль',
         sort_order=-5,
+    )
+    last_login_at: Mapped[Optional[datetime]] = mapped_column(
+        TIMESTAMP(),
+        nullable=True,
+        default=None,
+        comment='Последний вход',
+        sort_order=-1,
     )

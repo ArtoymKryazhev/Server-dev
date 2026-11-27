@@ -3,7 +3,9 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.repositories import AccessTokenRepository
 from src.repositories import PostRepository
+from src.repositories import RefreshTokenRepository
 from src.repositories import UserRepository
 
 from .common_dependencies import sqlalchemy_async_session_generator
@@ -29,3 +31,25 @@ async def get_user_repository(
     :return: Репозиторий для работы с пользователями.
     """
     return UserRepository(async_db_session=async_db_session)
+
+
+async def get_access_token_repository(
+        async_db_session: Annotated[AsyncSession, Depends(sqlalchemy_async_session_generator)],
+) -> AccessTokenRepository:
+    """Зависимость для внедрения репозитория access-токенов.
+
+    :param async_db_session: Асинхронная сессия БД.
+    :return: Репозиторий access-токенов.
+    """
+    return AccessTokenRepository(async_db_session=async_db_session)
+
+
+async def get_refresh_token_repository(
+        async_db_session: Annotated[AsyncSession, Depends(sqlalchemy_async_session_generator)],
+) -> RefreshTokenRepository:
+    """Зависимость для внедрения репозитория refresh-токенов.
+
+    :param async_db_session: Асинхронная сессия БД.
+    :return: Репозиторий refresh-токенов.
+    """
+    return RefreshTokenRepository(async_db_session=async_db_session)
