@@ -18,14 +18,14 @@ class PostController(BaseControllerInterface):
         :param post_id: ID поста.
         :return: Полный DTO поста.
         """
-        return await self._post_repository.get_post_by_id(post_id=post_id)
+        return await self._post_repository.get_one_full_by_id(object_id=post_id)
 
     async def get_post_many(self) -> List[PostFullDto]:
         """Получение списка постов.
 
         :return: Список постов.
         """
-        return await self._post_repository.get_post_many()
+        return await self._post_repository.get_many_full()
 
     async def create_post(self, post: PostFullDto) -> PostFullDto:
         """Создание поста.
@@ -33,7 +33,7 @@ class PostController(BaseControllerInterface):
         :param post: Данные поста.
         :return: Созданный пост.
         """
-        return await self._post_repository.create_post(post=post)
+        return await self._post_repository.upsert(dto=post)
 
     async def update_post(self, post_id: int, post: PostFullDto) -> Optional[PostFullDto]:
         """Редактирование поста.
@@ -42,7 +42,10 @@ class PostController(BaseControllerInterface):
         :param post: Новые данные поста.
         :return: Обновлённый пост.
         """
-        return await self._post_repository.update_post(post_id=post_id, post=post)
+        existing = await self._post_repository.get_one_full_by_id(object_id=post_id)
+        if existing is None:
+            return None
+        return await self._post_repository.upsert(dto=post.model_copy(update={'id': post_id}))
 
     async def delete_post(self, post_id: int) -> bool:
         """Удаление поста.
@@ -50,4 +53,4 @@ class PostController(BaseControllerInterface):
         :param post_id: ID поста.
         :return: Признак удаления.
         """
-        return await self._post_repository.delete_post(post_id=post_id)
+        return await self._post_repository.delete_one_by_id(object_id=post_id)
