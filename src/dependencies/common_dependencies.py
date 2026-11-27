@@ -1,17 +1,10 @@
-from typing import List
+from sqlalchemy.ext.asyncio import async_sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine
 
-from src.schemas.data_transfer_objects import PostFullDto
+from settings import app_settings
 
-posts = [
-    PostFullDto(id=1, author_name='Bob', content='52'),
-    PostFullDto(id=2, author_name='Billy', content='67'),
-    PostFullDto(id=3, author_name='John', content='Lorem ipsum'),
-]
+from .common_factories import get_sqlalchemy_async_session_generator
 
-
-async def get_posts() -> List[PostFullDto]:
-    """Получение списка полных DTO постов.
-
-    :return: Список полных DTO постов.
-    """
-    return posts
+db_engine = create_async_engine(app_settings.SQL_DSN, echo=True)
+async_session_factory = async_sessionmaker(bind=db_engine, expire_on_commit=False)
+sqlalchemy_async_session_generator = get_sqlalchemy_async_session_generator(async_session_factory)
